@@ -5,7 +5,7 @@ import PropTypes from "prop-types";
 import Toast from "react-bootstrap/Toast";
 import ToastContainer from "react-bootstrap/ToastContainer";
 
-// context provides addNewToast(title, body, variation) function
+// context provides addNewToast(title, body, variation = null) function
 export const ToastQueueContext = createContext();
 
 const DEFAULT_DURATION = 3000;
