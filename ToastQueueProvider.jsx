@@ -24,6 +24,7 @@ export default function ToastQueueProvider({ children }) {
         title: title,
         body: body,
         variation: variation,
+        autohide: autohide,
       },
     ]);
   }
