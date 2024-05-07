@@ -49,7 +49,6 @@ export default function ToastQueueProvider({ children }) {
       <ToastContainer
         className="p-3"
         position="bottom-end"
-        style={{ zIndex: 1 }}
       >
         {queue.map((toast) => (
           <Toast
