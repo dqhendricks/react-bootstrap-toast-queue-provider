@@ -3,7 +3,7 @@ import { useState, createContext } from "react";
 import Toast from "react-bootstrap/Toast";
 import ToastContainer from "react-bootstrap/ToastContainer";
 
-// context provides addNewToast(title, body, variation = null) function
+// context provides addNewToast(title, body, autohide = true, variation = null) function
 export const ToastQueueContext = createContext();
 
 const DEFAULT_DURATION = 3000;
@@ -14,7 +14,7 @@ export default function ToastQueueProvider({ children }) {
   const [queue, setQueue] = useState([]);
 
   // optional 'variation' argument sets Bootstrap bg color (primary, secondary, success, danger, warning, info, light, dark)
-  function addNewToast(title, body, variation = null) {
+  function addNewToast(title, body, autohide = true, variation = null) {
     if (queue.length >= MAX_TOASTS) return;
     setQueue((currentQueue) => [
       ...currentQueue,
@@ -58,7 +58,7 @@ export default function ToastQueueProvider({ children }) {
             onExited={() => removeToast(toast.id)}
             delay={DEFAULT_DURATION}
             bg={toast.variation}
-            autohide
+            autohide={toast.autohide}
           >
             <Toast.Header>
               <strong className="me-auto">{toast.title}</strong>
