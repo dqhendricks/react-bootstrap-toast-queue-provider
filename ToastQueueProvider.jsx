@@ -4,7 +4,7 @@ import Toast from "react-bootstrap/Toast";
 import ToastContainer from "react-bootstrap/ToastContainer";
 
 // context provides addNewToast(title, body, autohide = true, variation = null) function
-export const ToastQueueContext = createContext();
+export const ToastQueueContext = createContext(null);
 
 const DEFAULT_DURATION = 3000;
 const MAX_TOASTS = 10;
