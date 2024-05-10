@@ -3,8 +3,14 @@ import { useState, createContext } from "react";
 import Toast from "react-bootstrap/Toast";
 import ToastContainer from "react-bootstrap/ToastContainer";
 
-// context provides addNewToast(title, body, autohide = true, variation = null) function
-export const ToastQueueContext = createContext(null);
+// context provides createToast({ title, body, autohide = true, variant = null }) function
+export const ToastQueueContext = createContext({
+  createToast: () => {
+    throw new Error(
+      "createToast can only be used inside <ToastQueueContext.Provider>",
+    );
+  },
+});
 
 const DEFAULT_DURATION = 3000;
 const MAX_TOASTS = 10;
@@ -13,18 +19,16 @@ const MAX_TOASTS = 10;
 export default function ToastQueueProvider({ children }) {
   const [queue, setQueue] = useState([]);
 
-  // optional 'variation' argument sets Bootstrap bg color (primary, secondary, success, danger, warning, info, light, dark)
-  function addNewToast(title, body, autohide = true, variation = null) {
+  // optional 'variant' property sets Bootstrap bg color (primary, secondary, success, danger, warning, info, light, dark)
+  function createToast(toastData) {
     if (queue.length >= MAX_TOASTS) return;
     setQueue((currentQueue) => [
       ...currentQueue,
       {
         id: Date.now(),
         show: true,
-        title: title,
-        body: body,
-        variation: variation,
-        autohide: autohide,
+        autohide: true, // this default gets overwritten if set in toastData
+        ...toastData,
       },
     ]);
   }
@@ -33,8 +37,8 @@ export default function ToastQueueProvider({ children }) {
   function closeToast(id) {
     setQueue((currentQueue) =>
       currentQueue.map((toast) =>
-        toast.id === id ? { ...toast, show: false } : toast
-      )
+        toast.id === id ? { ...toast, show: false } : toast,
+      ),
     );
   }
 
@@ -44,12 +48,9 @@ export default function ToastQueueProvider({ children }) {
   }
 
   return (
-    <ToastQueueContext.Provider value={{ addNewToast: addNewToast }}>
+    <ToastQueueContext.Provider value={{ createToast }}>
       {children}
-      <ToastContainer
-        className="p-3"
-        position="bottom-end"
-      >
+      <ToastContainer className="p-3" position="bottom-end">
         {queue.map((toast) => (
           <Toast
             key={toast.id}
@@ -57,8 +58,8 @@ export default function ToastQueueProvider({ children }) {
             onClose={() => closeToast(toast.id)}
             onExited={() => removeToast(toast.id)}
             delay={DEFAULT_DURATION}
-            bg={toast.variation}
             autohide={toast.autohide}
+            bg={toast?.variant}
           >
             <Toast.Header>
               <strong className="me-auto">{toast.title}</strong>
