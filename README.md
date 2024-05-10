@@ -21,18 +21,18 @@ export default function App() {
 }
 ```
 
-*2) Child components may import and use context to gain access to `addNewToast( title, body, autohide = true, variant = null )` function*
+*2) Child components may import and use context to gain access to `createToast({ title, body, autohide = true, variant = null })` function*
 ```
 import { useContext } from "react";
 
 import { ToastQueueContext } from "./ToastQueueProvider";
 
 export default function ExampleConsumer() {
-  const { addNewToast } = useContext(ToastQueueContext);
+  const { createToast } = useContext(ToastQueueContext);
 
   return (
     <button
-      onClick={() => addNewToast("Success", "You have queued a toast!")}
+      onClick={() => createToast({ title: "Success", body: "You have queued a toast!" })}
     >
       Create New Toast
     </button>
