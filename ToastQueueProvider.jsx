@@ -12,7 +12,7 @@ export const ToastQueueContext = createContext({
   },
 });
 
-const TOAST_POSITION = "top-end";
+const TOAST_PLACEMENT = "top-end";
 const DEFAULT_DURATION = 3000;
 const MAX_TOASTS = 10;
 
@@ -51,7 +51,7 @@ export default function ToastQueueProvider({ children }) {
   return (
     <ToastQueueContext.Provider value={{ createToast }}>
       {children}
-      <ToastContainer className="p-3" position={TOAST_POSITION}>
+      <ToastContainer className="p-3" position={TOAST_PLACEMENT}>
         {queue.map((toast) => (
           <Toast
             key={toast.id}
