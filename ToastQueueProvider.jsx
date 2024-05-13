@@ -9,7 +9,7 @@ const defaultProps = {
   maxToasts: 10,
 };
 
-// context provides createToast({ title, body, autohide = true, bg = null }) function
+// context provides createToast({ title, body, autohide = true, bg = undefined }) function
 export const ToastQueueContext = createContext({
   createToast: () => {
     throw new Error(
