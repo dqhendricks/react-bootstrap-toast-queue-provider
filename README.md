@@ -7,7 +7,7 @@ For a working example, view the code sandbox [here](https://codesandbox.io/p/dev
 
 **Examples usage:**
 
-*1) Wrap any children that need to use the Toast Queue Provider*
+*1) Wrap any children that need to use the Toast Queue Provider. Available props { postion, autohideDelay, maxToasts }.*
 ```
 import ToastQueueProvider from "./components/ToastQueueProvider";
 import ExampleConsumer from "./components/ExampleConsumer";
@@ -21,7 +21,7 @@ export default function App() {
 }
 ```
 
-*2) Child components may import and use context to gain access to `createToast({ title, body, autohide = true, variant = null })` function*
+*2) Child components may import and use context to gain access to `createToast({ title, body, autohide = true, bg = undefined })` function*
 ```
 import { useContext } from "react";
 
