@@ -10,7 +10,7 @@ import {
 import {
   ToastQueueProvider,
   ToastQueueContext,
-} from "../src/components/ToastQueueProvider.jsx";
+} from "../ToastQueueProvider.jsx";
 
 const sleep = (t) => new Promise((resolve) => setTimeout(resolve, t));
 
