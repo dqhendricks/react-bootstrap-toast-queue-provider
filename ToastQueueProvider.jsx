@@ -3,7 +3,13 @@ import { useState, createContext } from "react";
 import Toast from "react-bootstrap/Toast";
 import ToastContainer from "react-bootstrap/ToastContainer";
 
-// context provides createToast({ title, body, autohide = true, variant = null }) function
+const defaultProps = {
+  position: "bottom-end",
+  autohideDelay: 3000,
+  maxToasts: 10,
+};
+
+// context provides createToast({ title, body, autohide = true, bg = null }) function
 export const ToastQueueContext = createContext({
   createToast: () => {
     throw new Error(
@@ -12,17 +18,17 @@ export const ToastQueueContext = createContext({
   },
 });
 
-const TOAST_PLACEMENT = "top-end";
-const DEFAULT_DURATION = 3000;
-const MAX_TOASTS = 10;
-
 // wrap children in provider component, allowing them to use the context function
-export default function ToastQueueProvider({ children }) {
+export function ToastQueueProvider(props) {
   const [queue, setQueue] = useState([]);
+  const { children, position, autohideDelay, maxToasts } = {
+    ...defaultProps,
+    ...props,
+  };
 
-  // optional 'variant' property sets Bootstrap bg color (primary, secondary, success, danger, warning, info, light, dark)
+  // optional 'bg' property sets Bootstrap variant (primary, secondary, success, danger, warning, info, light, dark)
   function createToast(toastData) {
-    if (queue.length >= MAX_TOASTS) return;
+    if (queue.length >= maxToasts) return;
     setQueue((currentQueue) => [
       ...currentQueue,
       {
@@ -51,16 +57,16 @@ export default function ToastQueueProvider({ children }) {
   return (
     <ToastQueueContext.Provider value={{ createToast }}>
       {children}
-      <ToastContainer className="p-3" position={TOAST_PLACEMENT}>
+      <ToastContainer className="p-3" position={position}>
         {queue.map((toast) => (
           <Toast
             key={toast.id}
             show={toast.show}
             onClose={() => closeToast(toast.id)}
             onExited={() => removeToast(toast.id)}
-            delay={DEFAULT_DURATION}
+            delay={autohideDelay}
             autohide={toast.autohide}
-            bg={toast?.variant}
+            bg={toast?.bg}
           >
             <Toast.Header>
               <strong className="me-auto">{toast.title}</strong>
