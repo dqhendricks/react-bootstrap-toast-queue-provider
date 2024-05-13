@@ -1,18 +1,35 @@
 import { useContext } from "react";
-import { describe, test, expect, afterEach } from "vitest";
-import {
-  render,
-  fireEvent,
-  cleanup,
-  waitForElementToBeRemoved,
-} from "@testing-library/react";
+import { describe, test, expect, afterEach, vi } from "vitest";
+import { render, fireEvent, cleanup } from "@testing-library/react";
 
 import {
   ToastQueueProvider,
   ToastQueueContext,
 } from "../ToastQueueProvider.jsx";
 
-const sleep = (t) => new Promise((resolve) => setTimeout(resolve, t));
+vi.mock("react-bootstrap/ToastContainer", () => ({
+  default: Object.assign((props) => (
+    <>
+      <div data-testid="toastContainer">{`position: ${props.position}`}</div>
+      {props.children}
+    </>
+  )),
+}));
+
+vi.mock("react-bootstrap/Toast", () => ({
+  default: Object.assign(
+    (props) => (
+      <>
+        <div data-testid="toast">{`delay: ${props.delay}, autohide: ${props.autohide}, bg: ${props.bg}`}</div>
+        {props.children}
+      </>
+    ),
+    {
+      Header: (props) => <div data-testid="toast.header">{props.children}</div>,
+      Body: (props) => <div data-testid="toast.body">{props.children}</div>,
+    },
+  ),
+}));
 
 function TestConsumerComponent({ toastData }) {
   const { createToast } = useContext(ToastQueueContext);
@@ -44,6 +61,7 @@ describe("<ToastQueueProvider />", () => {
       </ToastQueueProvider>,
     );
     fireEvent.click(getByTestId("createToastButton"));
+    getByText("test title");
     getByText("test body");
   });
 
@@ -60,7 +78,7 @@ describe("<ToastQueueProvider />", () => {
       </ToastQueueProvider>,
     );
     fireEvent.click(getByTestId("createToastButton"));
-    await waitForElementToBeRemoved(() => getByText("test body"));
+    getByText("autohide: true", { exact: false });
   });
 
   test("createToast() sets toast autohide to false.", async () => {
@@ -76,13 +94,11 @@ describe("<ToastQueueProvider />", () => {
       </ToastQueueProvider>,
     );
     fireEvent.click(getByTestId("createToastButton"));
-    getByText("test body");
-    await sleep(100);
-    getByText("test body");
+    getByText("autohide: false", { exact: false });
   });
 
   test("createToast() renders variant toast.", () => {
-    const { getByTestId } = render(
+    const { getByTestId, getByText } = render(
       <ToastQueueProvider>
         <TestConsumerComponent
           toastData={{
@@ -94,10 +110,34 @@ describe("<ToastQueueProvider />", () => {
       </ToastQueueProvider>,
     );
     fireEvent.click(getByTestId("createToastButton"));
-    expect(document.getElementsByClassName("bg-secondary").length).toEqual(1);
+    getByText("bg: secondary", { exact: false });
   });
 
   // ToastQueueProvider props
+
+  test("ToastQueueProvider position prop", () => {
+    const { getByTestId, getByText } = render(
+      <ToastQueueProvider position="top-start">
+        <TestConsumerComponent
+          toastData={{ title: "test title", body: "test body" }}
+        />
+      </ToastQueueProvider>,
+    );
+    fireEvent.click(getByTestId("createToastButton"));
+    getByText("position: top-start", { exact: false });
+  });
+
+  test("ToastQueueProvider autohideDelay prop", () => {
+    const { getByTestId, getByText } = render(
+      <ToastQueueProvider autohideDelay={123}>
+        <TestConsumerComponent
+          toastData={{ title: "test title", body: "test body" }}
+        />
+      </ToastQueueProvider>,
+    );
+    fireEvent.click(getByTestId("createToastButton"));
+    getByText("delay: 123", { exact: false });
+  });
 
   test("ToastQueueProvider maxToasts prop", () => {
     const { getByTestId, getAllByText } = render(
@@ -114,3 +154,5 @@ describe("<ToastQueueProvider />", () => {
     expect(getAllByText("test body").length).toEqual(2);
   });
 });
+
+vi.clearAllMocks();
