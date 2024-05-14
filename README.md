@@ -1,5 +1,5 @@
 # react-bootstrap-toast-queue-provider
-This JS react component will allow you to queue multiple react-bootstrap Toast components using a simple context function. (TS version available [here](https://github.com/dqhendricks/react-bootstrap-toast-queue-provider-ts))
+This JS react component will allow you to queue multiple react-bootstrap Toast components using a simple context function. The reason I made this as a Context Provider is due to the fact that all react-bootstrap Toasts need to be contained within a single react-bootstrap ToastContainer component, no matter where they are used in the application. (TS version available [here](https://github.com/dqhendricks/react-bootstrap-toast-queue-provider-ts))
 
 *Notes: react-bootstrap package + CSS must be installed properly.*
 
