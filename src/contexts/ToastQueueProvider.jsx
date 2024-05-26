@@ -9,7 +9,7 @@ const defaultProps = {
 };
 
 // context provides createToast({ title, body, autohide = true, bg = undefined }) function
-export const ToastQueueContext = createContext({
+const ToastQueueContext = createContext({
   createToast: () => {
     throw new Error(
       "createToast can only be used inside <ToastQueueContext.Provider>",
@@ -76,3 +76,13 @@ export function ToastQueueProvider(props) {
     </ToastQueueContext.Provider>
   );
 }
+
+// context provides createToast({ title, body, autohide = true, bg = undefined }) function
+ToastQueueProvider.useToastQueue = function () {
+  const context = useContext(ToastQueueContext);
+  if (context === undefined)
+    throw new Error(
+      "ToastQueueContext cannot be used outside of ToastQueueProvider"
+    );
+  return context;
+};
