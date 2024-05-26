@@ -10,11 +10,7 @@ const defaultProps = {
 
 // context provides createToast({ title, body, autohide = true, bg = undefined }) function
 const ToastQueueContext = createContext({
-  createToast: () => {
-    throw new Error(
-      "createToast can only be used inside <ToastQueueContext.Provider>",
-    );
-  },
+  createToast: () => {},
 });
 
 // wrap children in provider component, allowing them to use the context function
