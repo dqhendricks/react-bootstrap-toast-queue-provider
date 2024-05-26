@@ -1,4 +1,4 @@
-import { useState, createContext } from "react";
+import { useState, createContext, useContext, useCallback } from "react";
 
 import Toast from "react-bootstrap/Toast";
 import ToastContainer from "react-bootstrap/ToastContainer";
@@ -6,7 +6,6 @@ import ToastContainer from "react-bootstrap/ToastContainer";
 const defaultProps = {
   position: "bottom-end",
   autohideDelay: 3000,
-  maxToasts: 10,
 };
 
 // context provides createToast({ title, body, autohide = true, bg = undefined }) function
@@ -21,14 +20,13 @@ export const ToastQueueContext = createContext({
 // wrap children in provider component, allowing them to use the context function
 export function ToastQueueProvider(props) {
   const [queue, setQueue] = useState([]);
-  const { children, position, autohideDelay, maxToasts } = {
+  const { children, position, autohideDelay } = {
     ...defaultProps,
     ...props,
   };
 
   // optional 'bg' property sets Bootstrap variant (primary, secondary, success, danger, warning, info, light, dark)
-  function createToast(toastData) {
-    if (queue.length >= maxToasts) return;
+  const createToast = useCallback(function (toastData) {
     setQueue((currentQueue) => [
       ...currentQueue,
       {
@@ -38,7 +36,7 @@ export function ToastQueueProvider(props) {
         ...toastData,
       },
     ]);
-  }
+  }, []);
 
   // begins toast close animation
   function closeToast(id) {
